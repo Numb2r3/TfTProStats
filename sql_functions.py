@@ -5,6 +5,25 @@ import mysql.connector
 import psycopg2
 import pandas as pd
 
+
+def get_sql_config():
+
+    dotenv_dict = dotenv_values(".env")
+    needed_keys = ["host","port","dbname","user","passwort"]
+
+    if not all(key in dotenv_dict for key in needed_keys):
+        raise ValueError("Missing database credentials in .env file")
+    
+    return dotenv_dict
+
+def get_engine_alchemy():
+    config = get_sql_config()
+    
+    db_url = f"postgresql://{config['user']}:{config['password']}@{config['host']}:{config['port']}/{config['dbname']}"
+    engine = sqlalchemy.create_engine(db_url)
+    return engine
+
+"""
 def get_sql_config():
     '''
         Function loads credentials from .env file and
@@ -84,3 +103,4 @@ def get_data_mysql(query):
     cursor.close()
     engine.close()
     return results
+    """
