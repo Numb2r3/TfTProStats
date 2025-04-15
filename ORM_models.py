@@ -11,52 +11,67 @@ Base = declarative_base()
 class Player(Base):
     __tablename__ = 'players'
 
-    id = Column('idx_player_id',String(36), primary_key = True, default=lambda: str(uuid.uuid4()))
-    name = Column(String, unique=True)
+    player_id = Column(String(36), primary_key = True, default=lambda: str(uuid.uuid4()))
+    name = Column(String, unique=True, nullable = False )
     
     #Realtionship
-    proAccounts = relationship('ProAccount', back_populates='player')
+    pro_accounts = relationship('ProAccount', back_populates='player')
 
 class ProAccount(Base):
-    __tablename__ = 'proAccounts'
+    __tablename__ = 'pro_accounts'
 
-    id = Column('idx_pro_account_id',String(36), primary_key = True,default=lambda: str(uuid.uuid4()))
-    accountName = Column('account_name',String(100))
+    pro_account_id = Column(String(36), primary_key = True,default=lambda: str(uuid.uuid4()))
+    account_name = Column(String(100))
     tagline = Column(String)
     server = Column(String)
-    isTournamentRealm = Column(Boolean)
+    is_tournament_realm = Column(Boolean)
+   
     #ForeignKey
-    playerId = Column(String(36), ForeignKey(players.id))
-
+    player_id = Column(String(36), ForeignKey("players.player_id"))
+    
     #relationship
-    player = relationship('Player', back_populates='proAccounts')
+    player = relationship('Player', back_populates='pro_accounts')
 
 class Tournament(Base):
     __tablename__ = 'tournaments'
     
-    id = Column('idx_Tournament_id',Integer, primary_key= True, autoincrement= True)
+    tournament_id = Column(Integer, primary_key= True, autoincrement= True)
     name = Column(String)
-    shortName = Column('short_name', String)
-    startTime = Column('start_time', Integer)
-    endTime = Column('end_time', Integer)
-    totalRounds = Column('total_rounds',Integer)
+    short_name = Column(String)
+    start_time = Column(Integer)
+    end_time = Column(Integer)
+    total_rounds = Column(Integer)
 
     #Relationship
-    tournamentRounds = relationship('TournamentRound',back_populates='tournament')
+    rounds = relationship('TournamentRound',back_populates='tournament')
 
 class TournamentRound(Base):
-    __tablename__ = 'tournamentRounds'
-    id = Column('idx_tournament_rounds_id',Integer,primary_key=True,autoincrement=True)
-    roundNumber = Column('round_number',Integer)
-    estStartTime =Column('est_start_time',Integer)
-    estEndTime = Column('est_end_time',Integer)
-    cutAfter = Column('cut_after',Boolean)
+    __tablename__ = 'tournament_rounds'
+    round_id = Column(Integer,primary_key=True,autoincrement=True)
+    round_number = Column(Integer)
+    est_start_time =Column(Integer)
+    est_end_time = Column(Integer)
+    cut_after = Column(Boolean)
 
     #ForeignKey
-    tournamentId = Column('tournament_id',Integer,ForeignKey("tournaments.id"))
+    tournament_id = Column(Integer,ForeignKey("tournaments.tournament_id"))
 
     #Relationship
-    tournament = relationship('Tournament',back_populates='tournamentRounds')
+    tournament = relationship('Tournament',back_populates='rounds')
+    games = relationship('Game', back_populates='tournament_round')
+
+class Game(Base):
+    __tablename__ = 'games'
+
+    game_id = Column(Integer,primary_key = True)
+    game_type = Column(String(30))
+
+    #ForeignKey
+    round_id = Column(Integer,ForeignKey("tournament_rounds.round_id"))
+
+    #Relationship
+    round = relationship('TournamentRound',back_populates = 'games')
+
 
 
 

@@ -4,6 +4,8 @@ import json
 from dotenv import load_dotenv
 import os
 
+key = os.getenv('riot_api_key')
+
 class RiotApiError(Exception):
     def __init__(self, message):
         super().__init__(message)
@@ -13,7 +15,7 @@ search_option =['account','summoner','league',]
 available_regions = ['europe','americas','asia','esport','ru','br1','euw1','eun1','la1','la2','me1','na1','la2','tr1']
 
 
-key = '?api_key=RGAPI-ee5fa6dd-0912-4a3c-81dc-25e0d1ce7bd2'
+
 
 def get_api(**kwargs):
     api_string = ''
@@ -98,7 +100,7 @@ def load_account(**kwargs):
     else:
         raise RiotApiError( 'load account error: no search parameter given')
     
-    return
+    
 
 def load_summonerId(region,puuid):
     if region not in available_regions:
